@@ -1,0 +1,53 @@
+@charset "UTF-8";
+
+*{
+	margin: 0;
+	padding: 0;
+}
+#wrap {
+	min-height: 100vh;
+	position: relative;
+	width: 100%;
+	margin-bottom: 15%;
+}
+.box {
+    margin-left: 20%;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    width: 60%;
+}
+h5 {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+table {
+    border-top: 1px solid #adacac;
+}
+thead {
+  text-align : center;
+  background: antiquewhite;
+}
+tbody {
+  text-align : center;
+}
+.addBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: center;
+}
+#logoBox {
+  margin: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.buttonBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: center;
+    margin-bottom: 20%;
+}

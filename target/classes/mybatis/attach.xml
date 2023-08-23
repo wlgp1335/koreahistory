@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="attach">
+	
+	<insert id="historyAdd">
+		INSERT INTO attach
+		(filename, history_id)
+		VALUES (#{filename}, #{historyId})
+	</insert>
+	
+	<delete id="delete_historyid">
+		DELETE FROM attach
+		WHERE history_id=#{historyId}
+	</delete>
+	
+	<insert id="noticeAdd">
+		INSERT INTO attach
+		(filename, notice_id)
+		VALUES (#{filename}, #{noticeId})
+	</insert>
+	
+	<delete id="delete_noticeid">
+		DELETE FROM attach
+		WHERE notice_id=#{noticeId}
+	</delete>
+	
+	<delete id="delete">
+		DELETE FROM attach
+		WHERE id=#{id}
+	</delete>
+	
+</mapper>

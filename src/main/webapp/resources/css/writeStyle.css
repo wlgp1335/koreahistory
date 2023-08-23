@@ -1,0 +1,33 @@
+@charset "UTF-8";
+*{
+	margin: 0;
+	padding: 0;
+}
+#wrap {
+	min-height: 100vh;
+	position: relative;
+	width: 100%;
+	margin-bottom: 15%;
+}
+.box{
+	margin-left: 20%;
+	padding-top: 60px;
+	width: 60%;
+}
+h5 {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.buttonBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20%;
+}
+#files {
+	display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}

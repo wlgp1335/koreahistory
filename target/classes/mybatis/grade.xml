@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="grade">
+	<select id="list" resultType="Grade">
+		SELECT *
+		FROM grade
+		ORDER BY id
+	</select>
+	
+	<insert id="add">
+		INSERT INTO grade
+		VALUES (#{id},#{name})
+		
+		<selectKey keyColumn="id" keyProperty="id" resultType="Integer" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<update id="update">
+		UPDATE grade
+		SET name=#{name}
+		WHERE id=#{id}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM grade
+		WHERE id=#{id}	
+	</delete>
+	
+	<select id="item" resultType="Grade">
+		SELECT * FROM grade
+		WHERE id=#{id}
+	</select>
+	
+	<!-- grade에 값이 없을때 초기설정 -->
+	<insert id="firstAdd">
+		INSERT INTO grade
+		VALUES (1,'관리자'), (2,'작성자'), (3,'사용자')
+	</insert>
+</mapper>

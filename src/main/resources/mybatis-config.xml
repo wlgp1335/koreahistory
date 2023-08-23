@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<settings>
+	<!-- 데이터베이스의 있는 언더바를 없애고 date의 d > D로 변경값을 참으로 하라 -->
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+	</settings>
+	
+	<!-- mapper.xml 추가할때마다 mybatis에 기록해서 실행 목록 추가 + 대소문자 구분 기재바람-->	
+	<typeAliases>
+		<typeAlias type="kr.ac.kopo.korea.model.History" alias="history"/>
+		<typeAlias type="kr.ac.kopo.korea.model.Member" alias="member"/>
+		<typeAlias type="kr.ac.kopo.korea.model.Grade" alias="grade"/>
+		<typeAlias type="kr.ac.kopo.korea.model.Notice" alias="notice"/>
+		<typeAlias type="kr.ac.kopo.korea.model.Often" alias="oftenqa"/>
+		<typeAlias type="kr.ac.kopo.korea.model.Attach" alias="attach"/>
+		<typeAlias type="kr.ac.kopo.korea.model.QA" alias="qa"/>
+		<typeAlias type="kr.ac.kopo.korea.model.Reply" alias="reply"/>
+	</typeAliases>
+	
+	<mappers>
+		<mapper resource="mybatis/history.xml"/>
+		<mapper resource="mybatis/member.xml"/>
+		<mapper resource="mybatis/grade.xml"/>
+		<mapper resource="mybatis/notice.xml"/>
+		<mapper resource="mybatis/oftenqa.xml"/>
+		<mapper resource="mybatis/attach.xml"/>
+		<mapper resource="mybatis/qa.xml"/>
+		<mapper resource="mybatis/reply.xml"/>
+	</mappers>
+</configuration>

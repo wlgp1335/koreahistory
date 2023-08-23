@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+	
+	<select id="login" resultType="Member">
+		SELECT * FROM member
+		WHERE id=#{id} AND passwd=#{passwd}
+	</select>
+	
+	<insert id="signup">
+		INSERT INTO member
+		(id, passwd, name, phone, nickname, reg_date, grade_id)
+		VALUES (#{id}, #{passwd}, #{name}, #{phone}, #{nickname}, NOW(), 3)
+	</insert>
+	
+	<select id="check_id" resultType="Integer">
+		SELECT COUNT(*) FROM member
+		WHERE id = #{id}
+	</select>
+	
+	<select id="total" resultType="Integer">
+		SELECT COUNT(*) FROM member
+	</select>
+
+	<select id="list" resultType="Member">
+		SELECT * FROM member
+		ORDER BY reg_date DESC
+	</select>
+	
+	<update id="changeGrade">
+		UPDATE member
+		SET grade_id=#{gradeId}
+		WHERE id=#{id}
+	</update>
+	
+	<select id="item" resultType="Member">
+		SELECT member.*, grade.name AS gname
+		FROM member
+		LEFT JOIN grade ON member.grade_id=grade.id
+		WHERE member.id=#{id}
+	</select>
+	
+	<update id="profile">
+		UPDATE member
+		SET passwd=#{passwd}, phone=#{phone}, nickname=#{nickname}
+		WHERE id=#{id}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM member
+		WHERE id=#{id}
+	</delete>
+	
+</mapper>

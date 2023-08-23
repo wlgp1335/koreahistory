@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="history">
+	<sql id="search">
+		SELECT history.*, NVL(NULLIF(nickname, " "),name) AS writer, COUNT(wish.history_id) AS wish
+		FROM history
+		LEFT JOIN member ON history.member_id=member.id
+		LEFT JOIN wish ON history.id = wish.history_id
+		<where>
+			<if test="keyword != null and keyword != ''">
+				history.title LIKE CONCAT(CONCAT('%',#{keyword}),'%')
+				OR
+				history.contents LIKE CONCAT(CONCAT('%',#{keyword}),'%')
+				OR
+				NVL(NULLIF(nickname, " "),name) LIKE CONCAT(CONCAT('%',#{keyword}),'%')
+			</if>
+		</where>
+		GROUP BY history.id
+		ORDER BY history.reg_date DESC
+	</sql>
+	
+	<select id="total" resultType="Integer">
+		SELECT COUNT(*) FROM (<include refid="search"></include>) t1
+	</select>
+
+	<select id="list" resultType="History">
+		SELECT *
+		FROM (<include refid="search"></include>) t1
+		
+		<if test="perPage != 0">
+			LIMIT ${offset}, ${perPage}
+		</if>
+	</select>
+
+	<insert id="add">
+		INSERT INTO history
+		(title, reg_date, contents, member_id)
+		VALUES (#{title}, NOW(), #{contents}, #{memberId})
+
+		<selectKey keyColumn="id" keyProperty="id" resultType="Integer" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<select id="item" resultMap="historyMap">
+		SELECT history.*, NVL(NULLIF(nickname, " "),name) AS writer, attach.id AS attach_id, filename 
+		FROM history
+		LEFT JOIN member ON history.member_id=member.id
+		LEFT JOIN attach ON history.id = attach.history_id
+		WHERE history.id = #{id}
+	</select>
+	
+	<!-- ORM 객체-관계 매핑-->
+	<resultMap type="history" id="historyMap" autoMapping="true">
+		<id column="id" property="id"/>
+		<collection property="attachs" column="history_id" ofType="Attach" javaType="ArrayList" autoMapping="true">
+			<id column="attach_id" property="id"/>
+		</collection>
+	</resultMap>
+
+	<update id="update">
+		UPDATE history
+		SET title=#{title}, contents=#{contents}
+		WHERE id=#{id} AND member_id=#{memberId}
+	</update>
+
+	<delete id="delete">
+		DELETE FROM history
+		WHERE id=#{id}
+	</delete>
+	
+	<delete id="delete_member">
+		DELETE FROM history
+		WHERE id=#{id} AND member_id=#{memberId}
+	</delete>
+
+	<insert id="wish_add">
+		INSERT INTO wish
+		VALUES (#{memberId}, #{historyId})
+	</insert>
+
+	<delete id="wish_delete">
+		DELETE FROM wish
+		WHERE member_id=#{memberId} AND history_id=#{historyId}
+	</delete>
+</mapper>

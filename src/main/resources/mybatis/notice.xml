@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="notice">
+	<sql id="search">
+		SELECT notice.*, NVL(NULLIF(nickname, " "),name) AS writer
+		FROM notice
+		LEFT JOIN member ON notice.member_id=member.id
+		<where>
+			<if test="keyword != null and keyword != ''">
+				notice.title LIKE CONCAT(CONCAT('%',#{keyword}),'%')
+				OR
+				notice.contents LIKE CONCAT(CONCAT('%',#{keyword}),'%')
+				OR
+				NVL(NULLIF(nickname, " "),name) LIKE CONCAT(CONCAT('%',#{keyword}),'%')
+			</if>
+		</where>
+		GROUP BY notice.id
+		ORDER BY notice.reg_date DESC
+	</sql>
+	
+	<select id="total" resultType="Integer">
+		SELECT COUNT(*) FROM (<include refid="search"></include>) t1
+	</select>
+	
+	<select id="list" resultType="Notice">
+		SELECT *
+		FROM (<include refid="search"></include>) t1
+		
+		<if test="perPage != 0">
+			LIMIT ${offset}, ${perPage}
+		</if>
+	</select>
+	
+	<insert id="add">
+		INSERT INTO notice
+		(title, reg_date, contents, member_id)
+		VALUES (#{title}, NOW(), #{contents}, #{memberId})
+		
+		<selectKey keyColumn="id" keyProperty="id" resultType="Integer" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<select id="item" resultMap="noticeMap">
+		SELECT notice.*, NVL(NULLIF(nickname, " "),name) AS writer, attach.id AS attach_id, filename 
+		FROM notice
+		LEFT JOIN member ON notice.member_id=member.id
+		LEFT JOIN attach ON notice.id = attach.notice_id
+		WHERE notice.id = #{id}
+	</select>
+	
+	<!-- ORM 객체-관계 매핑-->
+	<resultMap type="notice" id="noticeMap" autoMapping="true">
+		<id column="id" property="id"/>
+		<collection property="attachs" column="notice_id" ofType="Attach" javaType="ArrayList" autoMapping="true">
+			<id column="attach_id" property="id"/>
+		</collection>
+	</resultMap>
+	
+	<update id="update">
+		UPDATE notice
+		SET title=#{title}, contents=#{contents}
+		WHERE id=#{id} AND member_id=#{memberId}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM notice
+		WHERE id=#{id}
+	</delete>
+	
+	<delete id="delete_member">
+		DELETE FROM notice
+		WHERE id=#{id} AND member_id=#{memberId}
+	</delete>
+</mapper>

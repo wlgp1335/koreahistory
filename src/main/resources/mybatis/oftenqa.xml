@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper	namespace="oftenqa">
+	<sql id="search">
+		SELECT oftenqa.*, NVL(NULLIF(nickname, " "),name) AS writer
+		FROM oftenqa
+		LEFT JOIN member ON oftenqa.member_id=member.id
+		<where>
+			<if test="keyword != null and keyword != ''">
+				oftenqa.title LIKE CONCAT(CONCAT('%',#{keyword}),'%')
+				OR
+				oftenqa.contents LIKE CONCAT(CONCAT('%',#{keyword}),'%')
+				OR
+				NVL(NULLIF(nickname, " "),name) LIKE CONCAT(CONCAT('%',#{keyword}),'%')
+			</if>
+		</where>
+		GROUP BY oftenqa.id
+		ORDER BY oftenqa.reg_date DESC
+	</sql>
+
+	<select id="total" resultType="Integer">
+		SELECT COUNT(*) FROM (<include refid="search"></include>) t1
+	</select>
+	
+	<select id="list" resultType="Oftenqa">
+		SELECT *
+		FROM (<include refid="search"></include>) t1
+		
+		<if test="perPage != 0">
+			LIMIT ${offset}, ${perPage}
+		</if>
+	</select>
+	
+	<insert id="add">
+		INSERT INTO oftenqa
+		(title, reg_date, contents, member_id)
+		VALUES (#{title}, NOW(), #{contents}, #{memberId})
+		
+		<selectKey keyColumn="id" keyProperty="id" resultType="Integer" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<select id="item" resultType="oftenqa">
+		SELECT oftenqa.*, NVL(NULLIF(nickname, " "),name) AS writer
+		FROM oftenqa
+		LEFT JOIN member ON oftenqa.member_id=member.id
+		WHERE oftenqa.id = #{id}
+	</select>
+	
+	<update id="update">
+		UPDATE oftenqa
+		SET title=#{title}, contents=#{contents}
+		WHERE id=#{id} AND member_id=#{memberId}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM oftenqa
+		WHERE id=#{id}
+	</delete>
+	
+	<delete id="delete_member">
+		DELETE FROM oftenqa
+		WHERE id=#{id} AND member_id=#{memberId}
+	</delete>
+</mapper>
